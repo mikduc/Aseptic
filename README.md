@@ -1,15 +1,6 @@
-# aseptic
+# Aseptic
 
 Modern Streamlit workspace for profiling and cleaning data with Polars + LLM guidance.
-
-## What Changed
-- App title and branding updated to `aseptic`
-- UI redesigned into a clean single-page workflow:
-	- Upload
-	- Profile
-	- Suggestions
-	- Execute & Export
-- Repository simplified by removing non-essential scaffold/report files
 
 ## Core Stack
 - Frontend: Streamlit + `streamlit-ace` (+ optional `st-annotated-text`)

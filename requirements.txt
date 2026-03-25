@@ -1,0 +1,39 @@
+# Core Dependencies
+polars==0.20.4
+pandas>=2.2.3
+openpyxl==3.1.2
+pyarrow>=16.1.0
+
+# Backend
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic>=2.10.6
+
+# Frontend
+streamlit>=1.40.0
+streamlit-ace==0.1.1
+st-annotated-text==4.0.1
+
+# LLM Integration
+openai==2.29.0
+litellm==1.82.6
+instructor==1.14.5
+langchain==0.1.0
+langchain-community>=0.0.9,<0.1
+
+# Execution & Safety
+RestrictedPython==8.1
+timeout-decorator==0.5.0
+
+# Utilities
+python-dotenv==1.0.0
+requests>=2.32.3
+orjson>=3.10.15
+great_expectations==0.18.21
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+ruff==0.1.8
+mypy==1.7.0

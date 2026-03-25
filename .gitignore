@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.log
+temp/
+tmp/
+*.temp
+
+# Streamlit
+.streamlit/
+.cache/
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Data
+cleaned_data/
+sample_data/
+*.csv
+*.xlsx
+*.parquet
+*.json
+
+# System
+Thumbs.db

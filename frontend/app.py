@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import sys
 import tempfile
+import ipaddress
 from pathlib import Path
 from typing import Dict, Any, List
+from urllib.parse import urlparse
 
 import polars as pl
 import requests
@@ -19,6 +21,7 @@ except Exception:
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from backend.modules import DataProfiler, IntelligentIngestor, SafeExecutor, SuggestionEngine
+from config.settings import settings
 
 
 def set_styles() -> None:
@@ -87,6 +90,24 @@ def app_header() -> None:
 
 
 def ollama_status(base_url: str) -> Dict[str, Any]:
+    parsed = urlparse((base_url or "").strip())
+    if parsed.scheme not in {"http", "https"}:
+        return {"ok": False, "models": [], "error": "Invalid URL scheme"}
+
+    host = parsed.hostname
+    if not host:
+        return {"ok": False, "models": [], "error": "Missing host"}
+
+    is_local = host in {"localhost", "127.0.0.1", "::1"}
+    if not is_local:
+        try:
+            is_local = ipaddress.ip_address(host).is_loopback
+        except ValueError:
+            is_local = False
+
+    if not is_local:
+        return {"ok": False, "models": [], "error": "Only local Ollama URLs are allowed"}
+
     try:
         response = requests.get(f"{base_url.rstrip('/')}/api/tags", timeout=5)
         response.raise_for_status()
@@ -129,8 +150,18 @@ def upload_section() -> None:
     if uploaded is None:
         return
 
-    temp_path = Path(tempfile.gettempdir()) / uploaded.name
-    temp_path.write_bytes(uploaded.getbuffer())
+    max_bytes = settings.MAX_FILE_SIZE_MB * 1024 * 1024
+    if uploaded.size > max_bytes:
+        st.error(f"File exceeds size limit of {settings.MAX_FILE_SIZE_MB} MB")
+        return
+
+    suffix = Path(uploaded.name).suffix or ".tmp"
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+    temp_path = Path(temp_file.name)
+    try:
+        temp_file.write(uploaded.getbuffer())
+    finally:
+        temp_file.close()
     try:
         ingestor = IntelligentIngestor()
         with st.spinner("Loading dataset..."):

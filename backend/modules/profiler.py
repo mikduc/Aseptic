@@ -201,16 +201,20 @@ class DataProfiler:
         series = df[column]
         dtype = series.dtype
         dtype_category = categorize_dtype(dtype)
+        total_count = len(series)
+        null_count = int(series.is_null().sum())
+        non_null = series.drop_nulls()
+        unique_count = int(non_null.n_unique())
 
         # Basic statistics
         profile = {
             "column": column,
             "data_type": str(dtype),
             "data_type_category": dtype_category.value,
-            "null_count": series.is_null().sum(),
-            "null_percentage": (series.is_null().sum() / len(series) * 100),
-            "unique_count": series.n_unique(),
-            "unique_percentage": (series.n_unique() / len(series) * 100),
+            "null_count": null_count,
+            "null_percentage": (null_count / total_count * 100) if total_count > 0 else 0,
+            "unique_count": unique_count,
+            "unique_percentage": (unique_count / total_count * 100) if total_count > 0 else 0,
         }
 
         # Type-specific statistics
@@ -285,7 +289,7 @@ class DataProfiler:
                 "empty_string_count": 0,
             }
 
-        lengths = non_null.str.lengths()
+        lengths = non_null.str.len_bytes()
         empty_count = (series == "").sum()
 
         return {

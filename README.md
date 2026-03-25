@@ -1,13 +1,22 @@
-# CleanSlate
+# aseptic
 
-Modern Streamlit app for profiling and cleaning datasets with Polars + LLM guidance.
+Modern Streamlit workspace for profiling and cleaning data with Polars + LLM guidance.
 
-## Stack
-- Frontend: Streamlit + streamlit-ace (+ optional st-annotated-text)
+## What Changed
+- App title and branding updated to `aseptic`
+- UI redesigned into a clean single-page workflow:
+	- Upload
+	- Profile
+	- Suggestions
+	- Execute & Export
+- Repository simplified by removing non-essential scaffold/report files
+
+## Core Stack
+- Frontend: Streamlit + `streamlit-ace` (+ optional `st-annotated-text`)
 - Data engine: Polars
-- Profiling: Polars stats + Great Expectations-style health cards (with safe fallback)
-- LLM: OpenAI or Ollama via SuggestionEngine
-- Execution: RestrictedPython sandbox
+- Profiling: Polars metrics + Great Expectations-backed health cards (with runtime-safe fallback)
+- LLM: OpenAI or Ollama via `SuggestionEngine`
+- Execution: `RestrictedPython` sandbox
 
 ## Run
 ```bash
@@ -17,18 +26,28 @@ Modern Streamlit app for profiling and cleaning datasets with Polars + LLM guida
 ```
 
 ## Configure LLM
-Use the app sidebar:
+Use the sidebar in the app:
 - OpenAI: API key + model
 - Ollama: base URL + model
 
-## Project Structure
-- `frontend/app.py` – modern single-page UI workspace
+The UI also checks Ollama availability and loaded models.
+
+## Execution Behavior
+- Cleaning code runs in a restricted sandbox.
+- `import` lines in user-edited cleaning code are stripped before execution.
+- `pl` (Polars) is pre-provided in the execution context.
+- Cleaning execution is time-limited via `MAX_EXECUTION_SECONDS`.
+
+## Project Layout
+- `frontend/app.py` – redesigned app UI
 - `backend/modules/ingestor.py` – multi-format ingest
 - `backend/modules/profiler.py` – profiling + health cards
-- `backend/modules/llm_connector.py` – strict suggestion schema handling
+- `backend/modules/llm_connector.py` – structured cleaning suggestions
 - `backend/modules/executor.py` – restricted execution + export
-- `config/settings.py` – env/settings
+- `config/settings.py` – settings/env access
 - `tests/test_integration.py` – integration tests
 
-## Notes
-- On Python 3.14, Great Expectations is conditionally disabled at runtime to avoid known native crashes; health-card fallback remains active.
+## Runtime Notes
+- On Python 3.14, Great Expectations is conditionally bypassed to avoid known native crashes; health-card fallback remains active.
+- If `st-annotated-text` fails to import due dependency mismatch, UI gracefully falls back to plain text issue rendering.
+- Ollama availability checks only allow loopback/local URLs for safer defaults.
